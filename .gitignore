@@ -1,0 +1,6 @@
+.env
+config/
+__pycache__/
+.venv/
+.fastembed_cache/
+.ruff_cache/
