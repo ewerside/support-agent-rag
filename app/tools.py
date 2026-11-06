@@ -112,7 +112,8 @@ def search_kb(query: str) -> list[dict]:
 
 def normalize_order_id(order_id: str) -> str:
     # Customers type "wcg10001", "#10001" or "WCG 10001"; the number is what matters.
-    digits = re.search(r"\d{5}", order_id)
+    # Take the whole number, so a typo like 100201 isn't cut down to an order that exists.
+    digits = re.search(r"(?<!\d)\d{5,}(?!\d)", order_id)
     return f"WCG-{digits.group(0)}" if digits else order_id.strip().upper()
 
 
@@ -151,7 +152,10 @@ def _hubspot(method: str, path: str, body: dict) -> dict:
         raise RuntimeError(
             f"HubSpot {path} -> {response.status_code}: {response.text[:300]}"
         )
-    return response.json()
+    try:
+        return response.json()
+    except ValueError:
+        raise RuntimeError(f"HubSpot {path} returned a body that isn't JSON") from None
 
 
 def _find_contact(email: str) -> str | None:
@@ -172,12 +176,20 @@ def escalate(reason: str, summary: str, customer_email: str) -> dict:
     body = {
         "properties": {
             "subject": f"Chat escalation: {reason.replace('_', ' ')} ({email or 'no email'})",
-            "content": f"{summary}\n\nCustomer email: {email or 'not given'}",
+            "content": f"{summary}\n\nCustomer email, typed in the chat and not verified: "
+            f"{email or 'not given'}",
             "hs_pipeline": settings["pipeline_id"],
             "hs_pipeline_stage": settings["stage_id"],
         }
     }
-    contact_id = _find_contact(email) if email else None
+    try:
+        contact_id = _find_contact(email) if email else None
+    except (httpx.HTTPError, RuntimeError) as exc:
+        # The link to a contact is a nice-to-have. The customer still gets a ticket.
+        log.warning(
+            "contact search failed, opening the ticket without a contact: %s", exc
+        )
+        contact_id = None
     if contact_id:
         body["associations"] = [
             {
@@ -206,7 +218,8 @@ def run_tool(name: str, args: dict) -> tuple[str, bool]:
         else:
             return f"Unknown tool {name!r}. Use search_kb, get_order or escalate.", True
     except (psycopg.Error, httpx.HTTPError, RuntimeError) as exc:
-        # Tell the model the tool failed so it can say so instead of guessing.
+        # The details stay in the log. The model only learns that the tool failed, so it can
+        # say so instead of guessing, and can't repeat hostnames or API errors to the customer.
         log.error("tool %s failed: %s", name, exc)
-        return f"The {name} tool failed: {exc}", True
+        return f"The {name} tool isn't working right now. Don't guess the answer.", True
     return json.dumps(result), False

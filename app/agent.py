@@ -61,7 +61,10 @@ Everything else
 
 @lru_cache(maxsize=1)
 def _client() -> anthropic.Anthropic:
-    return anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
+    # The SDK waits up to 10 minutes by default, far longer than a customer will.
+    return anthropic.Anthropic(
+        api_key=config.ANTHROPIC_API_KEY, timeout=60, max_retries=2
+    )
 
 
 def _cited_sources(reply: str, titles: dict[str, str]) -> list[dict]:
@@ -74,8 +77,12 @@ def _cited_sources(reply: str, titles: dict[str, str]) -> list[dict]:
     ]
 
 
-def answer(history: list[dict]) -> dict:
-    """Run the agent on a conversation that ends with the customer's message."""
+def answer(history: list[dict], open_ticket: str | None = None) -> dict:
+    """Run the agent on a conversation that ends with the customer's message.
+
+    open_ticket is the ticket already opened in this conversation, if any, so a follow-up
+    message doesn't open a second one.
+    """
     start = time.monotonic()
     messages = list(history)
     tools_called: list[dict] = []
@@ -115,6 +122,15 @@ def answer(history: list[dict]) -> dict:
                 output, is_error = (
                     "Tool call limit reached. Answer with what you have.",
                     True,
+                )
+            elif block.name == "escalate" and (open_ticket or ticket_id):
+                existing = {
+                    "ticket_id": open_ticket or ticket_id,
+                    "note": "Already open, no new ticket.",
+                }
+                output, is_error = json.dumps(existing), False
+                tools_called.append(
+                    {"name": block.name, "input": block.input, "result": output}
                 )
             else:
                 output, is_error = run_tool(block.name, block.input)
