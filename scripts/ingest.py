@@ -1,6 +1,5 @@
 """Chunk the help center articles, embed them and upsert into support_agent.kb_chunks. Run: python -m scripts.ingest"""
 
-import re
 from pathlib import Path
 
 import psycopg
@@ -29,12 +28,6 @@ def read_article(path: Path) -> tuple[dict, str]:
     return yaml.safe_load(front), body
 
 
-def split_sections(body: str) -> list[str]:
-    """Split on second-level headings. The answer before the first heading is its own section."""
-    parts = re.split(r"^(?=## )", body, flags=re.MULTILINE)
-    return [p.strip() for p in parts if p.strip()]
-
-
 def split_long(text: str) -> list[str]:
     words = text.split()
     if len(words) <= MAX_WORDS:
@@ -49,10 +42,9 @@ def make_chunks() -> list[dict]:
     chunks = []
     for path in sorted(ARTICLES_DIR.glob("*.md")):
         meta, body = read_article(path)
-        blocks = [
-            block for section in split_sections(body) for block in split_long(section)
-        ]
-        for i, block in enumerate(blocks):
+        # v2: one chunk per article. In v1, splitting by section left out details the answer
+        # needed from other sections of the same article. Long articles are still split.
+        for i, block in enumerate(split_long(body.strip())):
             chunks.append(
                 {
                     "id": f"{meta['id']}#{i}",
