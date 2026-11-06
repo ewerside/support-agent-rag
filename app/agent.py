@@ -114,8 +114,11 @@ def answer(history: list[dict]) -> dict:
                     True,
                 )
             else:
-                tools_called.append({"name": block.name, "input": block.input})
                 output, is_error = run_tool(block.name, block.input)
+                # The result is kept so the evaluation judge sees exactly what the model saw.
+                tools_called.append(
+                    {"name": block.name, "input": block.input, "result": output}
+                )
                 if not is_error and block.name == "search_kb":
                     for chunk in json.loads(output):
                         chunk_ids.append(chunk["id"])
