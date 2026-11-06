@@ -1,0 +1,9 @@
+{
+  "version": "v3",
+  "date": "2026-11-06",
+  "agent_model": "claude-sonnet-5-5",
+  "judge_model": "claude-sonnet-5-5",
+  "effort": "low",
+  "note": "One change from v2: a system prompt line telling the agent to describe only what its tools did (no marking cases urgent, no promised steps the help center doesn't describe). Chunks stay as whole articles.",
+  "human_checked": false
+}
