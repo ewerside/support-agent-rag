@@ -35,3 +35,7 @@ What changed: Baseline: k=5 chunks per search, chunks split by section, effort l
 - **kb-06** (partial): "my tracking says delivered but theres nothing at my door" The reply covers the claim, order number and email, and the replacement or refund, but omits the expected quick checks (around the delivery spot, neighbors, delivery photo, waiting until the end of the next business day) and its order-number example format is not in the evidence.
 - **kb-03** (partial): "Whats the cheapest way to ship in the US and how long will it take?" The reply correctly gives Standard shipping at $6.95 and 3 to 5 business days, with all details supported by the evidence, but it omits the expected note that shipping is free on orders over $75, which the evidence doesn't contain.
 - **kb-18** (partial): "my machine is 3 years old and broke. can you still fix it and what does it cost?" The reply correctly says out-of-warranty repair is possible and gives the $49/C$65/£39 diagnostic fee, but it omits the credit toward the repair, the customer-paid shipping and the 10 business day turnaround from the expected answer.
+
+## Judge vs human
+
+The judge agreed with my grade on 10 of 10 sampled cases.

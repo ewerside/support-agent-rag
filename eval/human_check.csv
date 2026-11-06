@@ -1,0 +1,62 @@
+﻿id,question,expected_answer,agent_reply,judge_grade,ewerton_grade
+kb-21,"going away for 6 weeks, can I stop my coffee deliveries while im gone?",Yes. The subscription can be paused for up to 3 months from Account > Subscriptions. The change has to be made at least 48 hours before the next ship date.,"Yes, you can pause your subscription for up to 3 months, so 6 weeks is fine.
+
+1. Go to Account > Subscriptions.
+2. Click Pause and choose how long.
+3. It restarts on its own when the pause ends. You can also restart it early from the same page.
+
+Your schedule and coffee choice stay the same. If you only need to miss one delivery, you can use ""Skip next delivery"" instead.
+
+Source: ""How do I skip a delivery or pause my coffee subscription?""",partial,partial
+kb-10,How long do I have to return something?,"Most items can be returned within 30 days of delivery, starting from Account > Orders.","You have 30 days from delivery to return most items. To start a return, go to Account > Orders. We'll email you a prepaid return label.
+
+Some items can't be returned. Opened espresso machines and grinders also have a restocking fee. I can look up the details on either if you need them.
+
+Source: ""How do I return an item?""",correct,correct
+kb-26,I bought a kettle last week and now it's cheaper on your site. can I get the difference back?,"Yes. If the price dropped within 14 days of the order, contact Wrenfield with the order number and they refund the difference to the original payment method.","Yes, you can. If our price drops within 14 days of your order, we refund the difference to your original payment method. That includes our own sales.
+
+To start, I need your order number and the email you used at checkout. I'll look up the order and then pass your request to the team to process the refund.
+
+Source: ""Do you match prices?""",correct,correct
+order-07,did you guys get my return for WCG-10184? john.mills97@example.net,"Yes, the order shows as returned, so the return was received. The refund is issued within 5 business days after the return reaches the warehouse.","Yes. Order WCG-10184 shows a status of ""returned"", so your return is in our system.
+
+If you haven't had a refund email and it has been more than 5 business days since the return reached us, reply here and I can pass it to the team. If you got the email but the money hasn't arrived, check with your bank first.
+
+Source: ""When will I get my refund?""",correct,correct
+kb-04,ordering a grinder from Toronto. am I going to get charged duties when the parcel shows up?,"No. For Canadian orders, duties and GST/HST are collected at checkout, so there is nothing to pay on delivery.","No. For orders to Canada, we collect duties and GST/HST at checkout, so you won't pay anything when the parcel arrives. The carrier won't ask for a customs payment at the door. You'll see the full amount before you pay.
+
+Source: ""Will I pay customs or import fees?""",correct,correct
+kb-05,If I order at 3pm on a tuesday does it still ship today?,"No. Orders placed before 1 pm local warehouse time on a business day leave the same day, so a 3 pm order leaves on the next business day.","Probably not. Orders placed before 1 pm local warehouse time on a business day ship the same day. Orders placed after that ship the next business day. 3pm is after the cutoff, so a Tuesday 3pm order would leave on Wednesday, unless Wednesday is a public holiday.
+
+Local warehouse time is Eastern Time for US and Canadian orders and UK time for UK orders. So check 3pm in that time zone, not your own.
+
+Source: ""Where do you ship?""",correct,correct
+esc-08,this is the third broken grinder you've sent me. my lawyer will be in touch unless someone fixes this today. hannah.white@example.org,Pass the conversation to a person and tell the customer the team will reply by email.,"I'm sorry, Hannah. Three broken grinders is frustrating. I've passed your case to our support team and noted that you want this fixed today. A person from the team will reply to hannah.white@example.org by email.
+
+If you have your order numbers, reply with them. That may help the team move faster.",correct,correct
+kb-35,do you have a phone number I can call?,"No, there is no phone support. Customers can use the chat or the Contact us form, and the team replies within 1 business day.","We don't offer phone support. You can reach the team in two ways:
+
+- Chat on our website.
+- The form on the Contact us page. It works best if you need to send photos or videos, or explain something at length. Pick the topic that fits so your message reaches the right person.
+
+Support is open Monday to Friday, 8 am to 6 pm ET, and Saturday, 9 am to 1 pm ET. The team replies within 1 business day.
+
+I can also pass your question to a person on the team if you'd like.
+
+Source: ""How do I contact Wrenfield Coffee Gear?""",correct,correct
+kb-07,I ordered like 30 min ago and changed my mind. how do i cancel,"Orders can be cancelled within 2 hours of placing them: go to Account > Orders, open the order and click Cancel order.","You're still inside the 2-hour cancellation window, so you can cancel it yourself now:
+
+1. Go to Account > Orders.
+2. Open the order.
+3. Click Cancel order.
+
+If you checked out as a guest, use the link in your order confirmation email to get to the same page.
+
+The order is cancelled right away and you'll get a confirmation email. The refund goes back to your original payment method. Your bank may take a few days to show it.
+
+If you can't cancel it yourself, I can pass this to the team. They can also cancel within the 2 hours. After that, the order can't be stopped.
+
+Source: ""How do I cancel my order?""",correct,correct
+kb-24,do you take discover card in canada,"No. Discover is only accepted on US orders. In Canada you can pay with Visa, Mastercard, American Express, PayPal, Apple Pay, Google Pay or a Wrenfield gift card.","No, Discover isn't accepted on Canadian orders. It only works in the US store. In Canada you can pay with Visa, Mastercard, American Express, PayPal, Apple Pay, Google Pay or a Wrenfield gift card.
+
+Source: ""Which payment methods do you accept?""",correct,correct
