@@ -62,7 +62,8 @@
   </form>
 </div>
 <script>
-  const sessionId = crypto.randomUUID();
+  // The server issues the session id with its first reply.
+  let sessionId = null;
   const log = document.getElementById("log");
   const form = document.getElementById("form");
   const input = document.getElementById("input");
@@ -117,6 +118,7 @@
       if (!response.ok) {
         throw new Error(typeof result.detail === "string" ? result.detail : "Something went wrong. Please try again.");
       }
+      sessionId = result.session_id;
       waiting.textContent = result.reply;
       addMeta(waiting, result);
     } catch (error) {
