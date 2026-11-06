@@ -3,11 +3,12 @@
 python -m eval.run_eval run v1 --note "baseline"   # run all cases, write eval/results/v1/
 python -m eval.run_eval human-check v1             # sample 10 cases into eval/human_check.csv
 python -m eval.run_eval report v1                  # rebuild report.md from results.csv
-python -m eval.run_eval compare v1 v2              # side by side in eval/results/comparison.md
+python -m eval.run_eval compare v1 v2 v3           # side by side in eval/results/comparison.md
 """
 
 import argparse
 import csv
+import itertools
 import json
 import random
 import statistics
@@ -459,46 +460,45 @@ def worse_metrics(s_old: dict, s_new: dict) -> list[str]:
     return worse
 
 
-def compare(old: str, new: str) -> None:
-    before, after = read_results(old), read_results(new)
-    s_old, s_new = summarize(before), summarize(after)
-    notes = {
-        v: json.loads((RESULTS_DIR / v / "meta.json").read_text(encoding="utf-8"))[
-            "note"
-        ]
-        for v in (old, new)
+def compare(versions: list[str]) -> None:
+    """Side-by-side metrics for the versions in order, plus what changed between each pair."""
+    results = {v: read_results(v) for v in versions}
+    summaries = {v: summarize(rows) for v, rows in results.items()}
+    metas = {
+        v: json.loads((RESULTS_DIR / v / "meta.json").read_text(encoding="utf-8"))
+        for v in versions
     }
+    table = [metric_rows(summaries[v]) for v in versions]
     lines = [
-        f"# Evaluation: {old} vs {new}",
+        f"# Evaluation: {' vs '.join(versions)}",
         "",
-        f"- {old}: {notes[old]}",
-        f"- {new}: {notes[new]}",
+        *[f"- {v}: {metas[v]['note']}" for v in versions],
         "",
-        f"| Metric | {old} | {new} |",
-        "| --- | --- | --- |",
+        f"| Metric | {' | '.join(versions)} |",
+        f"| --- |{' --- |' * len(versions)}",
         *[
-            f"| {a[0]} | {a[1]} | {b[1]} |"
-            for a, b in zip(metric_rows(s_old), metric_rows(s_new))
+            f"| {rows[0][0]} | {' | '.join(row[1] for row in rows)} |"
+            for rows in zip(*table)
         ],
-        "",
-        "## Cases whose grade changed",
-        "",
     ]
-    old_grades = {r["id"]: r["correctness"] for r in before}
-    changed = [r for r in after if r["correctness"] != old_grades[r["id"]]]
-    lines += [
-        f"- {r['id']}: {old_grades[r['id']]} -> {r['correctness']}" for r in changed
-    ] or ["None."]
-    lines += ["", f"## Metrics that got worse in {new}", ""]
-    lines += worse_metrics(s_old, s_new) or ["None."]
+    for old, new in itertools.pairwise(versions):
+        old_grades = {r["id"]: r["correctness"] for r in results[old]}
+        changed = [r for r in results[new] if r["correctness"] != old_grades[r["id"]]]
+        lines += ["", f"## {old} to {new}", "", "Cases whose grade changed:", ""]
+        lines += [
+            f"- {r['id']}: {old_grades[r['id']]} -> {r['correctness']}" for r in changed
+        ] or ["- None."]
+        lines += ["", "Metrics that got worse:", ""]
+        lines += worse_metrics(summaries[old], summaries[new]) or ["- None."]
     agreement = human_agreement()
-    if agreement:
+    checked = [v for v in versions if metas[v].get("human_checked")]
+    if agreement and checked:
         matched, total, _ = agreement
         lines += [
             "",
             "## Judge vs human",
             "",
-            f"On {total} sampled {old} cases, the judge agreed with my grade on {matched}.",
+            f"On {total} sampled {checked[0]} cases, the judge agreed with my grade on {matched}.",
         ]
     (RESULTS_DIR / "comparison.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
@@ -521,9 +521,7 @@ def main() -> None:
     )
     sub.add_parser("human-check").add_argument("version")
     sub.add_parser("report").add_argument("version")
-    compare_parser = sub.add_parser("compare")
-    compare_parser.add_argument("old")
-    compare_parser.add_argument("new")
+    sub.add_parser("compare").add_argument("versions", nargs="+")
     args = parser.parse_args()
     if args.command == "run":
         run(args.version, args.note, args.only.split(",") if args.only else None)
@@ -532,7 +530,7 @@ def main() -> None:
     elif args.command == "report":
         write_report(args.version)
     else:
-        compare(args.old, args.new)
+        compare(args.versions)
 
 
 if __name__ == "__main__":
