@@ -4,7 +4,7 @@ title: Can I return an espresso machine or grinder I already opened?
 category: returns
 ---
 
-Yes, within 30 days of delivery, as long as it works and comes back with all its parts. A 15% restocking fee is taken from the refund.
+An opened espresso machine can go back within 30 days of delivery if it works and has all its parts, and a 15% restocking fee is taken from the refund. An opened grinder can go back only if no beans have gone through it.
 
 ## Espresso machines
 
