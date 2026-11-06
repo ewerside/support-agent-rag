@@ -11,6 +11,7 @@ What changed: One change from v1: each chunk is a whole article instead of one s
 | Retrieval hit@5 (35 help center questions) | 100% |
 | Retrieval MAP@5 | 0.95 |
 | Correct answers (60 cases, judged) | 100% |
+| Correct with no unsupported claim | 90% |
 | Partial answers | 0% |
 | Invention rate (answers with an unsupported claim) | 10% |
 | Escalation precision | 100% |
@@ -30,7 +31,7 @@ What changed: One change from v1: each chunk is a whole article instead of one s
 | escalate | 10 | 10 | 0 | 0 | 2 |
 | out_of_scope | 5 | 5 | 0 | 0 | 0 |
 
-## The 3 worst cases
+## The 3 weakest answers, with the judge's notes
 
 - **kb-05** (correct): "If I order at 3pm on a tuesday does it still ship today?" The reply gives the 1 pm local warehouse time cutoff and says a 3 pm order leaves the next business day, matching the expected answer; the 'Probably not' hedge is minor, and naming Wednesday assumes no holiday, which the evidence doesn't confirm.
 - **kb-18** (correct): "my machine is 3 years old and broke. can you still fix it and what does it cost?" The reply matches the expected answer on the diagnostic fees in all three currencies, the credit toward the repair, customer-paid shipping and the 10 business day turnaround. The only unsupported part is the stated reason that the repair cost depends on the fault, though the evidence does say a quote is emailed after diagnosis.

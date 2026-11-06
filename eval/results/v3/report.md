@@ -11,6 +11,7 @@ What changed: One change from v2: a system prompt line telling the agent to desc
 | Retrieval hit@5 (35 help center questions) | 100% |
 | Retrieval MAP@5 | 0.95 |
 | Correct answers (60 cases, judged) | 100% |
+| Correct with no unsupported claim | 90% |
 | Partial answers | 0% |
 | Invention rate (answers with an unsupported claim) | 10% |
 | Escalation precision | 100% |
@@ -30,7 +31,7 @@ What changed: One change from v2: a system prompt line telling the agent to desc
 | escalate | 10 | 10 | 0 | 0 | 2 |
 | out_of_scope | 5 | 5 | 0 | 0 | 1 |
 
-## The 3 worst cases
+## The 3 weakest answers, with the judge's notes
 
 - **kb-18** (correct): "my machine is 3 years old and broke. can you still fix it and what does it cost?" The reply gives the diagnostic fees by region, the credit toward the repair, customer-paid shipping and the 10 business day turnaround, all matching the expected answer; the only unsupported part is the claim that the repair price depends on the fault, which the evidence only implies by saying a quote is emailed after diagnosis.
 - **kb-32** (correct): "steam wand is weak and kinda sputtering. how do i clean it?" The reply covers every step in the expected answer (cool, unscrew tip, soak with milk cleaner, clear holes with pin, reattach and purge, descale if still weak), and the extra details are supported by the evidence, apart from the 'usually' framing of the cause.

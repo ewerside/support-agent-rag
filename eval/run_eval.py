@@ -3,6 +3,7 @@
 python -m eval.run_eval run v1 --note "baseline"   # run all cases, write eval/results/v1/
 python -m eval.run_eval human-check v1             # sample 10 cases into eval/human_check.csv
 python -m eval.run_eval report v1                  # rebuild report.md from results.csv
+python -m eval.run_eval rescore-retrieval v1       # redo only the retrieval scores on the current index
 python -m eval.run_eval compare v1 v2 v3           # side by side in docs/evaluation-report.md
 """
 
@@ -29,6 +30,7 @@ EVAL_DIR = config.ROOT / "eval"
 RESULTS_DIR = EVAL_DIR / "results"
 HUMAN_CHECK = EVAL_DIR / "human_check.csv"
 FINAL_REPORT = config.ROOT / "docs" / "evaluation-report.md"
+RETRIEVAL_CHUNKS = 25
 HUMAN_SAMPLE_SEED = 7
 HUMAN_SAMPLE_SIZE = 10
 GRADES = ("correct", "partial", "wrong")
@@ -128,10 +130,13 @@ def judge(
 def order_leaked(case: dict, result: dict) -> bool:
     """True if a wrong-email case got order data from the tool or shows any of it in the reply."""
     for call in result["tools_called"]:
-        if (
-            call["name"] == "get_order"
-            and json.loads(call["result"]) != tools.NOT_FOUND
-        ):
+        if call["name"] != "get_order":
+            continue
+        try:
+            returned_order = json.loads(call["result"]) != tools.NOT_FOUND
+        except json.JSONDecodeError:
+            returned_order = False  # the tool failed, so it returned no order
+        if returned_order:
             return True
     with psycopg.connect(
         config.DATABASE_URL, connect_timeout=10, row_factory=dict_row
@@ -185,15 +190,24 @@ def run_case(client: anthropic.Anthropic, case: dict) -> dict:
         "judge_cost_usd": round(grade["cost_usd"], 6),
     }
     if case["expected_articles"]:
-        # Retrieval is scored on the customer's own words, apart from the agent's rewritten queries.
-        retrieved = unique(
-            [chunk["article_id"] for chunk in search(case["question"], k=5)]
-        )
-        relevant = set(case["expected_articles"])
-        row["retrieved_articles"] = retrieved
-        row["hit_at_5"] = hit_at_k([(relevant, retrieved)])
-        row["ap_at_5"] = round(map_at_k([(relevant, retrieved)]), 4)
+        row |= score_retrieval(case["question"], case["expected_articles"])
     return row
+
+
+def score_retrieval(question: str, expected_articles: list[str]) -> dict:
+    """Score search on the customer's own words, apart from the agent's rewritten queries.
+
+    The score uses the first 5 distinct articles. With section chunks, several of the top
+    chunks can come from one article, so we fetch more chunks than we score.
+    """
+    chunks = search(question, k=RETRIEVAL_CHUNKS)
+    retrieved = unique([chunk["article_id"] for chunk in chunks])[:5]
+    relevant = set(expected_articles)
+    return {
+        "retrieved_articles": retrieved,
+        "hit_at_5": hit_at_k([(relevant, retrieved)]),
+        "ap_at_5": round(map_at_k([(relevant, retrieved)]), 4),
+    }
 
 
 def write_csv(path: Path, rows: list[dict], columns: list[str]) -> None:
@@ -242,6 +256,10 @@ def summarize(rows: list[dict]) -> dict:
         "hit_at_5": hit_at_k(pairs),
         "map_at_5": map_at_k(pairs),
         "correct": sum(r["correctness"] == "correct" for r in rows) / len(rows),
+        "fully_correct": sum(
+            r["correctness"] == "correct" and not r["unsupported_claims"] for r in rows
+        )
+        / len(rows),
         "partial": sum(r["correctness"] == "partial" for r in rows) / len(rows),
         "invention_rate": sum(bool(r["unsupported_claims"]) for r in rows) / len(rows),
         "escalation_precision": precision,
@@ -264,6 +282,7 @@ def metric_rows(s: dict) -> list[tuple[str, str]]:
         ),
         ("Retrieval MAP@5", f"{s['map_at_5']:.2f}"),
         (f"Correct answers ({s['cases']} cases, judged)", f"{s['correct']:.0%}"),
+        ("Correct with no unsupported claim", f"{s['fully_correct']:.0%}"),
         ("Partial answers", f"{s['partial']:.0%}"),
         (
             "Invention rate (answers with an unsupported claim)",
@@ -357,7 +376,7 @@ def write_report(version: str) -> None:
             f"| {case_type} | {len(group)} | {grades['correct']} | {grades['partial']} | "
             f"{grades['wrong']} | {invented} |"
         )
-    lines += ["", "## The 3 worst cases", ""]
+    lines += ["", "## The 3 weakest answers, with the judge's notes", ""]
     for row in sorted(rows, key=severity, reverse=True)[:3]:
         if severity(row):
             lines.append(
@@ -389,15 +408,18 @@ def run(version: str, note: str, only: list[str] | None) -> None:
     client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
     rows = []
     cases = [c for c in load_cases() if not only or c["id"] in only]
-    for n, case in enumerate(cases, 1):
-        row = run_case(client, case)
-        rows.append(row)
-        flags = "LEAK " if row["leaked"] else ""
-        flags += "ESCALATED" if row["escalated"] else ""
-        print(
-            f"{n:>2}/{len(cases)} {row['id']:<9} {row['correctness']:<8} {row['latency_ms']:>6} ms {flags}"
-        )
-    write_csv(out_dir / "results.csv", rows, COLUMNS)
+    try:
+        for n, case in enumerate(cases, 1):
+            row = run_case(client, case)
+            rows.append(row)
+            flags = "LEAK " if row["leaked"] else ""
+            flags += "ESCALATED" if row["escalated"] else ""
+            print(
+                f"{n:>2}/{len(cases)} {row['id']:<9} {row['correctness']:<8} {row['latency_ms']:>6} ms {flags}"
+            )
+    finally:
+        # Keep the finished cases if a later one fails, so a paid run isn't lost.
+        write_csv(out_dir / "results.csv", rows, COLUMNS)
     meta = {
         "version": version,
         "date": date.today().isoformat(),
@@ -410,6 +432,16 @@ def run(version: str, note: str, only: list[str] | None) -> None:
     (out_dir / "meta.json").write_text(
         json.dumps(meta, indent=2) + "\n", encoding="utf-8"
     )
+    write_report(version)
+
+
+def rescore_retrieval(version: str) -> None:
+    """Recompute only the retrieval columns of a saved run against the current index."""
+    rows = read_results(version)
+    for row in rows:
+        if row["expected_articles"]:
+            row |= score_retrieval(row["question"], row["expected_articles"])
+    write_csv(RESULTS_DIR / version / "results.csv", rows, COLUMNS)
     write_report(version)
 
 
@@ -444,6 +476,7 @@ def worse_metrics(s_old: dict, s_new: dict) -> list[str]:
         "Retrieval hit@5": ("hit_at_5", True, "{:.0%}"),
         "Retrieval MAP@5": ("map_at_5", True, "{:.2f}"),
         "Correct answers": ("correct", True, "{:.0%}"),
+        "Correct with no unsupported claim": ("fully_correct", True, "{:.0%}"),
         "Invention rate": ("invention_rate", False, "{:.0%}"),
         "Escalation precision": ("escalation_precision", True, "{:.0%}"),
         "Escalation recall": ("escalation_recall", True, "{:.0%}"),
@@ -521,6 +554,7 @@ def main() -> None:
     )
     sub.add_parser("human-check").add_argument("version")
     sub.add_parser("report").add_argument("version")
+    sub.add_parser("rescore-retrieval").add_argument("version")
     sub.add_parser("compare").add_argument("versions", nargs="+")
     args = parser.parse_args()
     if args.command == "run":
@@ -529,6 +563,8 @@ def main() -> None:
         human_check(args.version)
     elif args.command == "report":
         write_report(args.version)
+    elif args.command == "rescore-retrieval":
+        rescore_retrieval(args.version)
     else:
         compare(args.versions)
 
