@@ -1,6 +1,6 @@
 ---
 id: subscription-pause-skip
-title: How do I skip a delivery or pause my subscription?
+title: How do I skip a delivery or pause my coffee subscription?
 category: subscription
 ---
 

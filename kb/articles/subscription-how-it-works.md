@@ -19,7 +19,7 @@ We charge your card each time a bag ships, not up front. You get a reminder emai
 
 ## Managing your subscription
 
-Everything is in Account > Subscriptions. You can change the coffee, skip a delivery, pause or cancel there. See "How do I skip a delivery or pause my subscription?" and "How do I cancel my coffee subscription?".
+Everything is in Account > Subscriptions. You can change the coffee, skip a delivery, pause or cancel there. See "How do I skip a delivery or pause my coffee subscription?" and "How do I cancel my coffee subscription?".
 
 ## Discount codes
 

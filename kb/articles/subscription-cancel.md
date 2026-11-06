@@ -12,7 +12,7 @@ Cancel at least 48 hours before your next ship date. If you cancel later than th
 
 ## Would a pause work better?
 
-If you have too much coffee or are going away, you can pause for up to 3 months instead. You keep your schedule and your coffee choice, and it restarts on its own. See "How do I skip a delivery or pause my subscription?".
+If you have too much coffee or are going away, you can pause for up to 3 months instead. You keep your schedule and your coffee choice, and it restarts on its own. See "How do I skip a delivery or pause my coffee subscription?".
 
 ## After you cancel
 
