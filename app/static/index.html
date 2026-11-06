@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wrenfield Coffee Gear support</title>
+<style>
+  :root {
+    --bg: #f6f3ee;
+    --panel: #ffffff;
+    --text: #2b2420;
+    --muted: #7a6f66;
+    --accent: #6b3f22;
+    --user: #6b3f22;
+    --user-text: #ffffff;
+    --bot: #efe9e1;
+    --border: #e2d9ce;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .chat {
+    max-width: 720px;
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  header { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  header h1 { margin: 0; font-size: 18px; }
+  header p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+  #log { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .user { align-self: flex-end; background: var(--user); color: var(--user-text); border-bottom-right-radius: 4px; }
+  .bot { align-self: flex-start; background: var(--bot); border-bottom-left-radius: 4px; }
+  .meta { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); white-space: normal; }
+  .meta ul { margin: 2px 0 0; padding-left: 18px; }
+  .error { align-self: center; color: #a3261b; font-size: 13px; }
+  form { display: flex; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--border); }
+  input { flex: 1; padding: 10px 12px; font: inherit; border: 1px solid var(--border); border-radius: 10px; }
+  button { padding: 10px 16px; font: inherit; color: #fff; background: var(--accent); border: 0; border-radius: 10px; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: default; }
+</style>
+</head>
+<body>
+<div class="chat">
+  <header>
+    <h1>Wrenfield Coffee Gear</h1>
+    <p>Ask about orders, shipping, returns, warranty, subscriptions or your machine.</p>
+  </header>
+  <div id="log"></div>
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Type your question" required>
+    <button id="send">Send</button>
+  </form>
+</div>
+<script>
+  const sessionId = crypto.randomUUID();
+  const log = document.getElementById("log");
+  const form = document.getElementById("form");
+  const input = document.getElementById("input");
+  const send = document.getElementById("send");
+
+  function addMessage(cls, text) {
+    const div = document.createElement("div");
+    div.className = "msg " + cls;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+
+  function addMeta(div, result) {
+    if (!result.sources.length && !result.ticket_id) return;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    if (result.sources.length) {
+      meta.append("Sources:");
+      const list = document.createElement("ul");
+      for (const source of result.sources) {
+        const item = document.createElement("li");
+        item.textContent = source.title;
+        list.appendChild(item);
+      }
+      meta.appendChild(list);
+    }
+    if (result.ticket_id) {
+      const ticket = document.createElement("div");
+      ticket.textContent = "Ticket " + result.ticket_id + " opened for our team.";
+      meta.appendChild(ticket);
+    }
+    div.appendChild(meta);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+    addMessage("user", message);
+    input.value = "";
+    send.disabled = true;
+    const waiting = addMessage("bot", "...");
+    try {
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, message }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(typeof result.detail === "string" ? result.detail : "Something went wrong. Please try again.");
+      }
+      waiting.textContent = result.reply;
+      addMeta(waiting, result);
+    } catch (error) {
+      waiting.remove();
+      const div = document.createElement("div");
+      div.className = "error";
+      div.textContent = error.message;
+      log.appendChild(div);
+    } finally {
+      send.disabled = false;
+      input.focus();
+    }
+  });
+</script>
+</body>
+</html>
