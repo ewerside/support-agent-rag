@@ -302,10 +302,13 @@ def human_agreement() -> tuple[int, int, list[dict]] | None:
         return None
     with HUMAN_CHECK.open(encoding="utf-8-sig") as f:
         # Excel set to Portuguese saves CSV with semicolons, so accept both separators.
-        dialect = csv.Sniffer().sniff(f.readline(), delimiters=",;")
+        header = f.readline()
         f.seek(0)
+        delimiter = ";" if header.count(";") > header.count(",") else ","
         rows = [
-            r for r in csv.DictReader(f, dialect=dialect) if r["ewerton_grade"].strip()
+            r
+            for r in csv.DictReader(f, delimiter=delimiter)
+            if r["ewerton_grade"].strip()
         ]
     if not rows:
         return None
