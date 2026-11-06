@@ -436,6 +436,29 @@ def human_check(version: str) -> None:
     )
 
 
+def worse_metrics(s_old: dict, s_new: dict) -> list[str]:
+    """Metrics where the new version did worse. True means higher is better."""
+    directions = {
+        "Retrieval hit@5": ("hit_at_5", True, "{:.0%}"),
+        "Retrieval MAP@5": ("map_at_5", True, "{:.2f}"),
+        "Correct answers": ("correct", True, "{:.0%}"),
+        "Invention rate": ("invention_rate", False, "{:.0%}"),
+        "Escalation precision": ("escalation_precision", True, "{:.0%}"),
+        "Escalation recall": ("escalation_recall", True, "{:.0%}"),
+        "Order leaks": ("order_leaks", False, "{}"),
+        "Cost per answer": ("cost_per_answer", False, "${:.4f}"),
+        "Median latency": ("median_latency_s", False, "{:.1f} s"),
+    }
+    worse = []
+    for label, (key, higher_is_better, fmt) in directions.items():
+        old_value, new_value = s_old[key], s_new[key]
+        if new_value < old_value if higher_is_better else new_value > old_value:
+            worse.append(
+                f"- {label}: {fmt.format(old_value)} -> {fmt.format(new_value)}"
+            )
+    return worse
+
+
 def compare(old: str, new: str) -> None:
     before, after = read_results(old), read_results(new)
     s_old, s_new = summarize(before), summarize(after)
@@ -466,6 +489,17 @@ def compare(old: str, new: str) -> None:
     lines += [
         f"- {r['id']}: {old_grades[r['id']]} -> {r['correctness']}" for r in changed
     ] or ["None."]
+    lines += ["", f"## Metrics that got worse in {new}", ""]
+    lines += worse_metrics(s_old, s_new) or ["None."]
+    agreement = human_agreement()
+    if agreement:
+        matched, total, _ = agreement
+        lines += [
+            "",
+            "## Judge vs human",
+            "",
+            f"On {total} sampled {old} cases, the judge agreed with my grade on {matched}.",
+        ]
     (RESULTS_DIR / "comparison.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
     )

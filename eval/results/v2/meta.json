@@ -1,0 +1,9 @@
+{
+  "version": "v2",
+  "date": "2026-11-06",
+  "agent_model": "claude-sonnet-5-5",
+  "judge_model": "claude-sonnet-5-5",
+  "effort": "low",
+  "note": "One change from v1: each chunk is a whole article instead of one section, so search_kb returns 5 full articles. Everything else is the same as v1.",
+  "human_checked": false
+}
