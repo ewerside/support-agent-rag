@@ -1,0 +1,168 @@
+# Store facts for Wrenfield Coffee Gear. The articles in kb/articles are written from these.
+# `values` lists every number and deadline in a fact (plus key terms when a fact has no number),
+# written exactly as the articles write them, so scripts/check_kb.py can match them.
+
+- id: shipping_basics
+  topic: shipping
+  text: >-
+    We ship to the United States, Canada and the United Kingdom only. US and Canadian orders ship
+    from our warehouse in Columbus, Ohio. UK orders ship from our warehouse in Leeds. Orders placed
+    before 1 pm local warehouse time on a business day leave the same day.
+  values: [United States, Canada, United Kingdom, Columbus, Leeds, 1 pm]
+
+- id: shipping_us
+  topic: shipping
+  text: >-
+    Standard shipping in the US takes 3 to 5 business days and costs $6.95. Express takes 1 to 2
+    business days and costs $14.95.
+  values: [3 to 5 business days, $6.95, 1 to 2 business days, $14.95]
+
+- id: shipping_canada
+  topic: shipping
+  text: >-
+    Standard shipping to Canada takes 5 to 8 business days and costs C$12.95. Express takes 2 to 4
+    business days and costs C$24.95.
+  values: [5 to 8 business days, C$12.95, 2 to 4 business days, C$24.95]
+
+- id: shipping_uk
+  topic: shipping
+  text: >-
+    Standard shipping in the UK takes 2 to 3 business days and costs £4.95. Express arrives the next
+    business day and costs £9.95.
+  values: [2 to 3 business days, £4.95, next business day, £9.95]
+
+- id: free_shipping
+  topic: shipping
+  text: >-
+    Standard shipping is free on orders over $75 in the US, over C$100 in Canada and over £60 in the
+    UK. The order total is counted after discounts and before tax. Express shipping is never free.
+  values: [$75, C$100, £60]
+
+- id: order_cancellation
+  topic: orders
+  text: >-
+    You can cancel an order or change its shipping address within 2 hours of placing it, from
+    Account > Orders. After 2 hours the order is with the warehouse and can't be changed or
+    cancelled, but you can return it after it arrives.
+  values: [2 hours]
+
+- id: return_window
+  topic: returns
+  text: >-
+    Most items can be returned within 30 days of delivery. Start the return from Account > Orders
+    and we email a prepaid return label. The refund goes to the original payment method within 5
+    business days after the item reaches our warehouse.
+  values: [30 days, prepaid return label, 5 business days]
+
+- id: restocking_fee
+  topic: returns
+  text: >-
+    Opened espresso machines and grinders returned in working order have a 15% restocking fee.
+    There is no fee for unopened items or for items that arrived faulty.
+  values: [15%]
+
+- id: non_returnable
+  topic: returns
+  text: >-
+    Gift cards, opened bags of coffee and used grinders can't be returned. A grinder counts as used
+    once beans have gone through it.
+  values: [gift cards, opened bags of coffee, used grinders]
+
+- id: warranty_terms
+  topic: warranty
+  text: >-
+    Espresso machines and grinders have a warranty of 2 years. Accessories have a warranty of 1
+    year. The warranty starts on the delivery date and covers defects in parts and workmanship. It
+    does not cover wear parts such as gaskets and burrs, or damage from scale buildup.
+  values: [2 years, 1 year]
+
+- id: warranty_claim
+  topic: warranty
+  text: >-
+    To make a warranty claim, use the Warranty claim form on the Contact us page with your order
+    number, the serial number and a short video of the problem. We reply within 2 business days. If
+    the claim is approved, we send a prepaid shipping label and repair or replace the item.
+  values: [2 business days, serial number, video]
+
+- id: repair_process
+  topic: warranty
+  text: >-
+    Out of warranty, we repair machines for a diagnostic fee of $49 in the US, C$65 in Canada or £39
+    in the UK, which is credited toward the repair if you go ahead. You pay shipping to us. Repairs
+    take 10 business days from the day the machine reaches us.
+  values: [$49, C$65, £39, 10 business days]
+
+- id: subscription_plan
+  topic: subscription
+  text: >-
+    The coffee subscription sends a 340 g bag every 2, 3 or 4 weeks. Subscription bags cost 10% less
+    than one-off bags and always ship free.
+  values: [340 g, "2, 3 or 4 weeks", 10%]
+
+- id: subscription_changes
+  topic: subscription
+  text: >-
+    You can skip a delivery, pause for up to 3 months or cancel from Account > Subscriptions.
+    Cancelling has no fee. Changes must be made at least 48 hours before the next ship date, or they
+    apply to the delivery after that.
+  values: [3 months, 48 hours]
+
+- id: import_duties
+  topic: payments
+  text: >-
+    UK prices include 20% VAT and UK orders ship from Leeds, so there are no import duties. For
+    Canadian orders we collect duties and GST/HST at checkout, so there is nothing to pay on
+    delivery. US orders pay sales tax based on the shipping address.
+  values: [20% VAT, GST/HST, nothing to pay on delivery]
+
+- id: payment_methods
+  topic: payments
+  text: >-
+    We accept Visa, Mastercard, American Express, PayPal, Apple Pay, Google Pay and Wrenfield gift
+    cards. Discover is accepted on US orders only.
+  values: [Visa, Mastercard, American Express, Discover, PayPal, Apple Pay, Google Pay]
+
+- id: coupons
+  topic: payments
+  text: >-
+    Only one coupon per order. Coupons can't be combined with each other or with the subscription
+    discount, and can't be added after the order is placed.
+  values: [one coupon per order]
+
+- id: price_match
+  topic: payments
+  text: >-
+    If our price for an item drops within 14 days of your order, we refund the difference. Before
+    you order, we match a lower price from an authorized retailer in your country for the same item
+    in stock. We don't match marketplace sellers or clearance sales.
+  values: [14 days]
+
+- id: support_hours
+  topic: contact
+  text: >-
+    Support is open Monday to Friday, 8 am to 6 pm ET, and Saturday, 9 am to 1 pm ET, by chat and
+    by the Contact us form. We reply to messages within 1 business day.
+  values: [8 am to 6 pm ET, 9 am to 1 pm ET, 1 business day]
+
+- id: descaling
+  topic: products
+  text: >-
+    Descale Wrenfield espresso machines every 2 months, or every month with hard water. Mix 1 sachet
+    of Wrenfield descaler in 1 liter of water. The descaling cycle takes about 25 minutes.
+  values: [every 2 months, 1 liter, 25 minutes]
+
+- id: burr_replacement
+  topic: products
+  text: >-
+    Replace the burrs of a Wrenfield grinder after about 300 kg (660 lb) of coffee, which is about 3
+    years of daily home use. The swap takes about 15 minutes and needs the 2.5 mm hex key that comes
+    with the grinder.
+  values: [300 kg, 660 lb, 3 years, 15 minutes, 2.5 mm]
+
+- id: grind_calibration
+  topic: products
+  text: >-
+    To calibrate a Wrenfield grinder, turn the dial finer until the burrs just touch, then set that
+    point as 0. For espresso, start at setting 8 and aim for 18 g of coffee in and 36 g out in 25 to
+    30 seconds. Go finer if the shot runs fast and coarser if it runs slow.
+  values: [setting 8, 18 g, 36 g, 25 to 30 seconds]
