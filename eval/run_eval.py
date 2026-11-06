@@ -345,15 +345,14 @@ def write_report(version: str) -> None:
     rows = read_results(version)
     meta = json.loads((RESULTS_DIR / version / "meta.json").read_text(encoding="utf-8"))
     s = summarize(rows)
-    setup = (
-        f"Run on {meta['date']}. Agent: {meta['agent_model']} at effort {meta['effort']}. "
-        f"Judge: {meta['judge_model']}. {s['cases']} cases. "
-        f"Total cost of this run, agent plus judge: ${s['eval_cost']:.2f}."
-    )
     lines = [
         f"# Evaluation report: {version}",
         "",
-        setup,
+        f"- Run on: {meta['date']}",
+        f"- Agent: {meta['agent_model']}, effort {meta['effort']}",
+        f"- Judge: {meta['judge_model']}",
+        f"- Cases: {s['cases']}",
+        f"- Cost of this run, agent plus judge: ${s['eval_cost']:.2f}",
         "",
         f"What changed: {meta['note']}",
         "",

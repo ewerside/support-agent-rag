@@ -1,6 +1,10 @@
 # Evaluation report: v1
 
-Run on 2026-11-05. Agent: claude-sonnet-5-5 at effort low. Judge: claude-sonnet-5-5. 60 cases. Total cost of this run, agent plus judge: $0.78.
+- Run on: 2026-11-05
+- Agent: claude-sonnet-5-5, effort low
+- Judge: claude-sonnet-5-5
+- Cases: 60
+- Cost of this run, agent plus judge: $0.78
 
 What changed: Baseline: k=5 chunks per search, chunks split by section, effort low, first system prompt.
 

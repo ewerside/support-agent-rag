@@ -1,6 +1,10 @@
 # Evaluation report: v3
 
-Run on 2026-11-06. Agent: claude-sonnet-5-5 at effort low. Judge: claude-sonnet-5-5. 60 cases. Total cost of this run, agent plus judge: $1.16.
+- Run on: 2026-11-06
+- Agent: claude-sonnet-5-5, effort low
+- Judge: claude-sonnet-5-5
+- Cases: 60
+- Cost of this run, agent plus judge: $1.16
 
 What changed: One change from v2: a system prompt line telling the agent to describe only what its tools did (no marking cases urgent, no promised steps the help center doesn't describe). Chunks stay as whole articles.
 

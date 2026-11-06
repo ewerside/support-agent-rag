@@ -1,6 +1,10 @@
 # Evaluation report: v2
 
-Run on 2026-11-06. Agent: claude-sonnet-5-5 at effort low. Judge: claude-sonnet-5-5. 60 cases. Total cost of this run, agent plus judge: $1.07.
+- Run on: 2026-11-06
+- Agent: claude-sonnet-5-5, effort low
+- Judge: claude-sonnet-5-5
+- Cases: 60
+- Cost of this run, agent plus judge: $1.07
 
 What changed: One change from v1: each chunk is a whole article instead of one section, so search_kb returns 5 full articles. Everything else is the same as v1.
 
