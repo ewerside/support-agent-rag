@@ -3,7 +3,7 @@
 python -m eval.run_eval run v1 --note "baseline"   # run all cases, write eval/results/v1/
 python -m eval.run_eval human-check v1             # sample 10 cases into eval/human_check.csv
 python -m eval.run_eval report v1                  # rebuild report.md from results.csv
-python -m eval.run_eval compare v1 v2 v3           # side by side in eval/results/comparison.md
+python -m eval.run_eval compare v1 v2 v3           # side by side in docs/evaluation-report.md
 """
 
 import argparse
@@ -28,6 +28,7 @@ from eval.metrics import hit_at_k, map_at_k, precision_recall, unique
 EVAL_DIR = config.ROOT / "eval"
 RESULTS_DIR = EVAL_DIR / "results"
 HUMAN_CHECK = EVAL_DIR / "human_check.csv"
+FINAL_REPORT = config.ROOT / "docs" / "evaluation-report.md"
 HUMAN_SAMPLE_SEED = 7
 HUMAN_SAMPLE_SIZE = 10
 GRADES = ("correct", "partial", "wrong")
@@ -500,9 +501,8 @@ def compare(versions: list[str]) -> None:
             "",
             f"On {total} sampled {checked[0]} cases, the judge agreed with my grade on {matched}.",
         ]
-    (RESULTS_DIR / "comparison.md").write_text(
-        "\n".join(lines) + "\n", encoding="utf-8"
-    )
+    FINAL_REPORT.parent.mkdir(exist_ok=True)
+    FINAL_REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
 
 
