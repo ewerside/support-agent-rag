@@ -6,9 +6,10 @@
 
 | Metric | v1 | v2 | v3 |
 | --- | --- | --- | --- |
-| Retrieval hit@5 (35 help center questions) | 97% | 100% | 100% |
-| Retrieval MAP@5 | 0.88 | 0.95 | 0.95 |
+| Retrieval hit@5 (35 help center questions) | 100% | 100% | 100% |
+| Retrieval MAP@5 | 0.90 | 0.95 | 0.95 |
 | Correct answers (60 cases, judged) | 85% | 100% | 100% |
+| Correct with no unsupported claim | 80% | 90% | 90% |
 | Partial answers | 15% | 0% | 0% |
 | Invention rate (answers with an unsupported claim) | 7% | 10% | 10% |
 | Escalation precision | 100% | 100% | 100% |
