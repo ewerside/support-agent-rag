@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "date": "2026-11-05",
+  "agent_model": "claude-sonnet-5-5",
+  "judge_model": "claude-sonnet-5-5",
+  "effort": "low",
+  "note": "Baseline: k=5 chunks per search, chunks split by section, effort low, first system prompt.",
+  "human_checked": true
+}

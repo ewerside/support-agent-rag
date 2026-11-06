@@ -301,7 +301,12 @@ def human_agreement() -> tuple[int, int, list[dict]] | None:
     if not HUMAN_CHECK.exists():
         return None
     with HUMAN_CHECK.open(encoding="utf-8-sig") as f:
-        rows = [r for r in csv.DictReader(f) if r["ewerton_grade"].strip()]
+        # Excel set to Portuguese saves CSV with semicolons, so accept both separators.
+        dialect = csv.Sniffer().sniff(f.readline(), delimiters=",;")
+        f.seek(0)
+        rows = [
+            r for r in csv.DictReader(f, dialect=dialect) if r["ewerton_grade"].strip()
+        ]
     if not rows:
         return None
     for r in rows:
