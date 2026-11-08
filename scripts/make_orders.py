@@ -15,7 +15,7 @@ import config
 SEED = 7
 ORDER_COUNT = 300
 FIRST_ORDER_NUMBER = 10001
-# A fixed date keeps the output the same on every run. It is the day this plan was written.
+# A fixed date keeps the output the same on every run. It is the day the sample data was made.
 TODAY = date(2026, 11, 5)
 EMAIL_DOMAINS = ["example.com", "example.org", "example.net"]
 REPEAT_CUSTOMER_RATE = 0.15
